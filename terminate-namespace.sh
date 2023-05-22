@@ -13,7 +13,7 @@ fi
 # Loop through the terminating namespaces
 for namespace in $terminating_namespaces; do
     if [[ $namespace == $namespace_prefix* ]]; then
-        echo "Terminating namespace $namespace detected. Beginning cleanup" \
+        echo "Terminating namespace $namespace detected. Beginning cleanup" 
         flink_deployments=$(kubectl -n $namespace get flinkdeployments.flink.apache.org -o json | jq -r '.items[] | .metadata.name')
         for deployment in $flink_deployments; do
             echo "patching the finalizer for cr flinkdeployments.flink.apache.org $deployment"
