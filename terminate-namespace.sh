@@ -3,7 +3,7 @@
 # Get all namespaces and filter the terminating ones
 terminating_namespaces=$(kubectl get namespaces --output=json | jq -r '.items[] | select(.status.phase=="Terminating") | .metadata.name')
 namespace_prefix="session"
-wait_time=3
+wait_time=10
 
 if [ -z "${terminating_namespaces[@]}" ]; then
     echo "No terminating namespaces detected" 
@@ -12,7 +12,8 @@ else
     echo "Terminating namespaces detected: " 
     for namespace in $terminating_namespaces; do
         echo $namespace
-    done 
+    done
+    echo "" 
 fi
 
 # Loop through the terminating namespaces
@@ -24,6 +25,7 @@ for namespace in $terminating_namespaces; do
             echo "patching the finalizer for cr flinkdeployments.flink.apache.org $deployment"
             kubectl -n $namespace patch flinkdeployments.flink.apache.org/$deployment -p '{"metadata":{"finalizers":[]}}' --type=merge
         done
+        echo ""
     fi 
 done
 
